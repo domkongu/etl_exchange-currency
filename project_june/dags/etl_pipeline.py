@@ -13,12 +13,12 @@ with DAG(
     default_args=default_args,
     start_date=datetime(2024, 1, 1),
     schedule_interval='@daily',
-    catchup=False,
+    catchup=True,
 ) as dag:
 
     fetch_data = BashOperator(
         task_id='fetch_exchange_rates',
-        bash_command='python /opt/airflow/scripts/fetch_exchange_rates.py'
+        bash_command='python /opt/airflow/scripts/fetch_exchange_rates.py {{ ds }}'
     )
 
     load_data = BashOperator(
