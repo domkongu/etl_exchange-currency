@@ -27,23 +27,20 @@ class ExchangeRateExtractor:
     def extract_to_csv(self, output_file='/opt/airflow/scripts/exchange_rates.csv', days_back=30):
         currencies = ['USD', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'PLN', 'VND']
         all_data = []
-        for i in range(days_back):
-            date = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
-            try:
-                print(f"Fetching data for {date}...")
-                data = self.get_historical_rates(date, symbols=currencies)
-                row = {
-                    'date': data['date'],
-                    'base_currency': data['base'],
-                    'timestamp': data['timestamp']
-                }
-                target = data['rates'].get('VND')
-                for currency, rate in data['rates'].items():
-                    row[f'rate_{currency}_per_VND'] = target / rate if rate else None
-                all_data.append(row)
-            except Exception as e:
-                print(f"Error fetching data for {date}: {e}")
-                continue
+        try:
+            print(f"Fetching data for {date}...")
+            data = self.get_historical_rates(date, symbols=currencies)
+            row = {
+                'date': data['date'],
+                'base_currency': data['base'],
+                'timestamp': data['timestamp']
+            }
+            target = data['rates'].get('VND')
+            for currency, rate in data['rates'].items():
+                row[f'rate_{currency}_per_VND'] = target / rate if rate else None
+            all_data.append(row)
+        except Exception as e:
+            print(f"Error fetching data for {date}: {e}")
         df = pd.DataFrame(all_data)
         df = df.sort_values('date')
         os.makedirs(os.path.dirname(output_file), exist_ok=True)
