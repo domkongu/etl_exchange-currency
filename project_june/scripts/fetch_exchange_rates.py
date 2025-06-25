@@ -35,16 +35,21 @@ class ExchangeRateExtractor:
                 'base_currency': data['base'],
                 'timestamp': data['timestamp']
             }
+#{'USD': 1.160982, 'GBP': 0.852422, 'JPY': 168.840482, 'AUD': 1.786676, 'CAD': 1.593105, 'CHF': 0.934822,
+#  'CNY': 8.326155, 'PLN': 4.248102, 'VND': 30362.575476}
+
             target = data['rates'].get('VND')
             for currency, rate in data['rates'].items():
-                row[f'rate_{currency}_per_VND'] = target / rate if rate else None
+                if rate:
+                    row['base_currency'] = currency
+                    row[f'rate_per_VND'] = target / rate
+                print(row)
                 all_data.append(row)
                 row = {
                     'date': data['date'],
                     'base_currency': data['base'],
                     'timestamp': data['timestamp']
                 }
-
             # all_data.append(row)
         except Exception as e:
             print(f"Error fetching data for {date}: {e}")
