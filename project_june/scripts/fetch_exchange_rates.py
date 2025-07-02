@@ -50,7 +50,6 @@ class ExchangeRateExtractor:
                     'base_currency': data['base'],
                     'timestamp': data['timestamp']
                 }
-            # all_data.append(row)
         except Exception as e:
             print(f"Error fetching data for {date}: {e}")
         df = pd.DataFrame(all_data)
