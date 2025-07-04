@@ -2,6 +2,12 @@ import psycopg2
 import pandas as pd
 import os
 
+'''
+This code is having a problem of loading data to postgres after making some update to fix the duplicated data when backfilling
+I will fix it later ... 
+'''
+
+
 # Environment variables
 DB_HOST = os.environ.get('POSTGRES_HOST', 'postgres')
 DB_NAME = os.environ.get('POSTGRES_DB', 'airflow')
@@ -38,12 +44,14 @@ columns = ['date', 'base_currency', 'timestamp', 'rate_per_VND']
 placeholders = ', '.join(['%s'] * len(columns))
 update_assignments = ', '.join([f"{col} = EXCLUDED.{col}" for col in ['timestamp', 'rate_per_VND']])
 
-insert_sql = f"""
-INSERT INTO exchange_rates ({', '.join(columns)})
-VALUES ({placeholders})
-ON CONFLICT (date, base_currency)
-DO UPDATE SET {update_assignments}
-"""
+# insert_sql = f"""
+# INSERT INTO exchange_rates ({', '.join(columns)})
+# VALUES ({placeholders})
+# ON CONFLICT (date, base_currency)
+# DO UPDATE SET {update_assignments}
+# """
+
+
 
 # Handle NaNs
 df = df.where(pd.notnull(df), None)
